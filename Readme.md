@@ -20,7 +20,7 @@ python3 -m http.server 8080
 
 ## Deployed URL
 
-🔗 _Coming soon — will be added after deployment_
+🔗 https://habit-tracker-rust-phi-62.vercel.app/
 
 ## Project structure
 habit-tracker/
