@@ -24,6 +24,7 @@ python3 -m http.server 8080
 
 ## Project structure
 habit-tracker/
+
 ├── index.html     ← entire app (HTML + CSS + JS)
 
 ├── README.md      ← setup instructions
