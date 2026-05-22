@@ -25,8 +25,11 @@ python3 -m http.server 8080
 ## Project structure
 habit-tracker/
 ├── index.html     ← entire app (HTML + CSS + JS)
+
 ├── README.md      ← setup instructions
+
 └── ANSWERS.md     ← design and process notes
+
 ## Features
 
 - Add, rename (double-click), and delete habits
