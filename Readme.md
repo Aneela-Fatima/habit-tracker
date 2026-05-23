@@ -20,7 +20,7 @@ python3 -m http.server 8080
 
 ## Deployed URL
 
-🔗 coming soon
+🔗 https://habit-tracker-ashen-three.vercel.app/
 
 ## Project structure
 habit-tracker/
