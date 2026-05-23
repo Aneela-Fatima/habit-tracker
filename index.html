@@ -305,11 +305,59 @@
 <div class="app" id="root"></div>
 
 <script>
+  // ── Date helpers ───────────────────────────────────────
+  const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  // Get the Monday of any given date's week
+  function getMonday(date) {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    const day = d.getDay();                  // 0=Sun, 1=Mon … 6=Sat
+    const diff = day === 0 ? -6 : 1 - day;  // how many days back to Monday
+    d.setDate(d.getDate() + diff);
+    return d;
+  }
+
+  // Add N days to a date, return new Date
+  function addDays(date, n) {
+    const d = new Date(date);
+    d.setDate(d.getDate() + n);
+    return d;
+  }
+
+  // "2025-05-23" — used as a unique key for each day
+  function dateKey(date) {
+    return date.toISOString().slice(0, 10);
+  }
+
+  // Are two dates the same calendar day?
+  function isSameDay(a, b) {
+    return dateKey(a) === dateKey(b);
+  }
+
+  // "19 May – 25 May"
+  function formatWeekLabel(monday) {
+    const sunday = addDays(monday, 6);
+    const opts = { month: 'short', day: 'numeric' };
+    return (
+      monday.toLocaleDateString('en-GB', opts) +
+      ' – ' +
+      sunday.toLocaleDateString('en-GB', opts)
+    );
+  }
+
+  // Returns array of 7 Date objects [Mon … Sun] for the current weekOffset
+  function getWeekDates() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const monday = addDays(getMonday(today), state.weekOffset * 7);
+    return Array.from({ length: 7 }, (_, i) => addDays(monday, i));
+  }
+
   // ── State ──────────────────────────────────────────────
-  // habits: array of { id, name }
-  // checks: not used yet — added in Step 6
   let state = {
-    habits: []
+    habits: [],
+    weekOffset: 0    // 0 = current week, -1 = last week, +1 = next week
   };
 
   // ── Helpers ────────────────────────────────────────────
@@ -319,40 +367,56 @@
 
   // ── Render ─────────────────────────────────────────────
   function render() {
-    const root = document.getElementById('root');
+    const root    = document.getElementById('root');
+    const today   = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    // --- static week header (real dates come in Step 5) ---
-    const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const weekDates   = getWeekDates();
+    const monday      = weekDates[0];
+    const isThisWeek  = state.weekOffset === 0;
+    const isFutureWeek = monday > today;
 
+    // ── Header ──
     let html = `
       <div class="header">
         <div>
           <div class="logo">streaks<span>.</span></div>
-          <div class="week-label">week of 19 May – 25 May</div>
+          <div class="week-label">week of ${formatWeekLabel(monday)}</div>
         </div>
         <div class="week-nav">
           <button class="nav-btn" id="btn-prev">← prev</button>
-          <button class="nav-btn today-btn" id="btn-today">today</button>
-          <button class="nav-btn" id="btn-next">next →</button>
+          ${!isThisWeek
+            ? `<button class="nav-btn today-btn" id="btn-today">today</button>`
+            : ''}
+          <button class="nav-btn" id="btn-next"
+            ${isFutureWeek ? 'disabled' : ''}>next →</button>
         </div>
       </div>
-
-      <div class="grid-wrap">
-        <!-- column headers (static for now) -->
-        <div class="grid-header">
-          <div class="col-head">habit</div>
-          <div class="col-head">Mon<br/><span style="font-size:10px;opacity:.7">19</span></div>
-          <div class="col-head">Tue<br/><span style="font-size:10px;opacity:.7">20</span></div>
-          <div class="col-head">Wed<br/><span style="font-size:10px;opacity:.7">21</span></div>
-          <div class="col-head">Thu<br/><span style="font-size:10px;opacity:.7">22</span></div>
-          <div class="col-head is-today">Fri<br/><span style="font-size:10px;opacity:.8">23</span></div>
-          <div class="col-head">Sat<br/><span style="font-size:10px;opacity:.7">24</span></div>
-          <div class="col-head">Sun<br/><span style="font-size:10px;opacity:.7">25</span></div>
-          <div class="col-head streak-head">🔥</div>
-        </div>
     `;
 
-    // --- habits or empty state ---
+    // ── Grid ──
+    html += `<div class="grid-wrap">`;
+
+    // Column headers — built from real dates
+    html += `<div class="grid-header">`;
+    html += `<div class="col-head">habit</div>`;
+
+    weekDates.forEach((d, i) => {
+      const isToday = isSameDay(d, today);
+      html += `
+        <div class="col-head ${isToday ? 'is-today' : ''}">
+          ${DAY_NAMES[i]}<br/>
+          <span style="font-size:10px;opacity:${isToday ? '.9' : '.7'}">
+            ${d.getDate()}
+          </span>
+        </div>
+      `;
+    });
+
+    html += `<div class="col-head streak-head">🔥</div>`;
+    html += `</div>`; // end .grid-header
+
+    // ── Habits or empty state ──
     if (state.habits.length === 0) {
       html += `
         <div class="empty">
@@ -363,32 +427,47 @@
       `;
     } else {
       state.habits.forEach(h => {
+        html += `<div class="habit-row" data-id="${h.id}">`;
+
+        // Name cell
         html += `
-          <div class="habit-row" data-id="${h.id}">
-            <div class="habit-name-cell">
-              <div class="habit-name" title="${h.name}">${h.name}</div>
-              <button class="del-btn" data-del="${h.id}" aria-label="Delete ${h.name}">✕</button>
-            </div>
-            <!-- 7 empty check cells (toggles wired in Step 6) -->
-            <div class="check-cell"><div class="checkmark"></div></div>
-            <div class="check-cell"><div class="checkmark"></div></div>
-            <div class="check-cell"><div class="checkmark"></div></div>
-            <div class="check-cell"><div class="checkmark"></div></div>
-            <div class="check-cell is-today"><div class="checkmark"></div></div>
-            <div class="check-cell disabled"><div class="checkmark"></div></div>
-            <div class="check-cell disabled"><div class="checkmark"></div></div>
-            <!-- streak (always 0 for now) -->
-            <div class="streak-cell">
-              <div class="streak-val zero">—</div>
-            </div>
+          <div class="habit-name-cell">
+            <div class="habit-name" title="${h.name}">${h.name}</div>
+            <button class="del-btn" data-del="${h.id}"
+              aria-label="Delete ${h.name}">✕</button>
           </div>
         `;
+
+        // 7 check cells — one per day
+        weekDates.forEach((d, i) => {
+          const isToday  = isSameDay(d, today);
+          const isFuture = d > today;
+
+          let cellClass = 'check-cell';
+          if (isToday)  cellClass += ' is-today';
+          if (isFuture) cellClass += ' disabled';
+
+          html += `
+            <div class="${cellClass}">
+              <div class="checkmark"></div>
+            </div>
+          `;
+        });
+
+        // Streak cell (always — for now)
+        html += `
+          <div class="streak-cell">
+            <div class="streak-val zero">—</div>
+          </div>
+        `;
+
+        html += `</div>`; // end .habit-row
       });
     }
 
-    html += `</div>`; // close .grid-wrap
+    html += `</div>`; // end .grid-wrap
 
-    // --- add habit form ---
+    // ── Add habit form ──
     html += `
       <div class="section-label">add habit</div>
       <div class="add-wrap">
@@ -410,37 +489,45 @@
 
   // ── Event binding ──────────────────────────────────────
   function bindEvents() {
-    // Add button
-    document.getElementById('add-btn').addEventListener('click', addHabit);
+    // Add habit
+    document.getElementById('add-btn')
+      .addEventListener('click', addHabit);
+    document.getElementById('habit-input')
+      .addEventListener('keydown', e => { if (e.key === 'Enter') addHabit(); });
 
-    // Enter key in input
-    document.getElementById('habit-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') addHabit();
-    });
-
-    // Delete buttons
+    // Delete habit
     document.querySelectorAll('[data-del]').forEach(btn => {
       btn.addEventListener('click', e => {
         e.stopPropagation();
-        const id = btn.dataset.del;
         if (confirm('Delete this habit and all its history?')) {
-          state.habits = state.habits.filter(h => h.id !== id);
+          state.habits = state.habits.filter(h => h.id !== btn.dataset.del);
           render();
         }
       });
     });
+
+    // Week navigation
+    document.getElementById('btn-prev')
+      .addEventListener('click', () => { state.weekOffset--; render(); });
+
+    document.getElementById('btn-next')
+      .addEventListener('click', () => {
+        if (state.weekOffset < 0) { state.weekOffset++; render(); }
+      });
+
+    const todayBtn = document.getElementById('btn-today');
+    if (todayBtn) {
+      todayBtn.addEventListener('click', () => { state.weekOffset = 0; render(); });
+    }
   }
 
   // ── Actions ────────────────────────────────────────────
   function addHabit() {
     const input = document.getElementById('habit-input');
-    const name = input.value.trim();
+    const name  = input.value.trim();
     if (!name) return;
-
     state.habits.push({ id: makeId(), name });
     render();
-
-    // re-focus input so user can keep adding
     document.getElementById('habit-input').focus();
   }
 
