@@ -10,76 +10,49 @@
     rel="stylesheet"
   />
   <style>
-    /* ── Reset ── */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Design tokens ── */
     :root {
-      /* Surfaces */
-      --bg:        #F5F2EE;
-      --surface:   #FDFCFA;
-      --surface2:  #F0EDE8;
-
-      /* Borders */
+      --bg:            #F5F2EE;
+      --surface:       #FDFCFA;
+      --surface2:      #F0EDE8;
       --border:        rgba(0,0,0,0.10);
       --border-strong: rgba(0,0,0,0.18);
-
-      /* Text */
-      --text:       #1A1714;
-      --text-muted: #7A746E;
-      --text-faint: #B0A89E;
-
-      /* Brand / accent — green */
-      --accent:       #2D6A4F;
-      --accent-light: #D8EEE3;
-
-      /* Today column */
-      --today-bg:   #2D6A4F;
-      --today-text: #ffffff;
-
-      /* Checkmark */
+      --text:          #1A1714;
+      --text-muted:    #7A746E;
+      --text-faint:    #B0A89E;
+      --accent:        #2D6A4F;
+      --accent-light:  #D8EEE3;
       --check-done:    #2D6A4F;
       --check-done-bg: #D8EEE3;
-
-      /* Streak — warm amber, distinct from green */
-      --streak: #E07A2F;
-
-      /* Danger */
-      --danger:       #C44B2B;
-
-      /* Typography */
-      --sans: 'DM Sans',  sans-serif;
-      --mono: 'DM Mono',  monospace;
-
-      /* Shape */
+      --streak:        #E07A2F;
+      --danger:        #C44B2B;
+      --today-bg:      #2D6A4F;
+      --today-text:    #ffffff;
+      --sans:  'DM Sans', sans-serif;
+      --mono:  'DM Mono', monospace;
       --radius:    10px;
       --radius-sm:  6px;
     }
 
-    /* ── Dark mode (follows OS) ── */
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg:        #15130F;
-        --surface:   #1E1B17;
-        --surface2:  #252118;
+        --bg:            #15130F;
+        --surface:       #1E1B17;
+        --surface2:      #252118;
         --border:        rgba(255,255,255,0.08);
         --border-strong: rgba(255,255,255,0.15);
-        --text:       #F0EDE8;
-        --text-muted: #8A8077;
-        --text-faint: #504840;
-        --accent:       #52B788;
-        --accent-light: #0D2E1F;
+        --text:          #F0EDE8;
+        --text-muted:    #8A8077;
+        --text-faint:    #504840;
+        --accent:        #52B788;
+        --accent-light:  #0D2E1F;
         --check-done:    #52B788;
         --check-done-bg: #0D2E1F;
-        --danger:       #E07A5F;
+        --danger:        #E07A5F;
       }
     }
 
-    /* ── Base ── */
     body {
       font-family: var(--sans);
       background: var(--bg);
@@ -89,14 +62,12 @@
       line-height: 1.5;
     }
 
-    /* ── App wrapper ── */
     .app {
       max-width: 900px;
       margin: 0 auto;
       padding: 2rem 1.25rem 4rem;
     }
 
-    /* ── Header ── */
     .header {
       display: flex;
       align-items: flex-end;
@@ -121,7 +92,6 @@
       margin-top: 2px;
     }
 
-    /* ── Week navigation ── */
     .week-nav {
       display: flex;
       align-items: center;
@@ -140,22 +110,15 @@
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
     }
-    .nav-btn:hover {
-      background: var(--surface2);
-      border-color: var(--border-strong);
-    }
+    .nav-btn:hover { background: var(--surface2); border-color: var(--border-strong); }
     .nav-btn.today-btn {
       background: var(--accent-light);
       color: var(--accent);
       border-color: transparent;
     }
     .nav-btn.today-btn:hover { opacity: 0.85; }
-    .nav-btn:disabled {
-      opacity: 0.35;
-      cursor: default;
-    }
+    .nav-btn:disabled { opacity: 0.35; cursor: default; }
 
-    /* ── Grid card ── */
     .grid-wrap {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -164,8 +127,6 @@
       margin-bottom: 1.5rem;
     }
 
-    /* ── Grid layout ── */
-    /* habit name | 7 day cols | streak col */
     .grid-header,
     .habit-row {
       display: grid;
@@ -173,7 +134,6 @@
       align-items: stretch;
     }
 
-    /* ── Grid header ── */
     .grid-header {
       background: var(--surface2);
       border-bottom: 1px solid var(--border);
@@ -191,28 +151,16 @@
       border-left: 1px solid var(--border);
       line-height: 1.3;
     }
-    .col-head:first-child {
-      border-left: none;
-      text-align: left;
-      padding-left: 16px;
-    }
-    .col-head.is-today {
-      background: var(--today-bg);
-      color: var(--today-text);
-      font-weight: 700;
-    }
-    .col-head.streak-head {
-      color: var(--streak);
-    }
+    .col-head:first-child { border-left: none; text-align: left; padding-left: 16px; }
+    .col-head.is-today { background: var(--today-bg); color: var(--today-text); font-weight: 700; }
+    .col-head.streak-head { color: var(--streak); }
 
-    /* ── Habit rows ── */
     .habit-row {
       border-top: 1px solid var(--border);
       transition: background 0.12s;
     }
     .habit-row:hover { background: var(--surface2); }
 
-    /* habit name cell */
     .habit-name-cell {
       display: flex;
       align-items: center;
@@ -231,7 +179,21 @@
       padding: 12px 0;
     }
 
-    /* checkmark cells */
+    .del-btn {
+      background: none;
+      border: none;
+      color: var(--text-faint);
+      font-size: 14px;
+      padding: 4px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .habit-row:hover .del-btn { opacity: 1; }
+    .del-btn:hover { color: var(--danger); }
+
     .check-cell {
       border-left: 1px solid var(--border);
       display: flex;
@@ -241,16 +203,10 @@
       cursor: pointer;
       transition: background 0.12s;
     }
-    .check-cell.is-today {
-      background: rgba(45,106,79,0.05);
-    }
+    .check-cell.is-today { background: rgba(45,106,79,0.05); }
     .check-cell:hover { background: var(--check-done-bg); }
-    .check-cell.disabled {
-      cursor: default;
-      opacity: 0.38;
-    }
+    .check-cell.disabled { cursor: default; opacity: 0.38; pointer-events: none; }
 
-    /* the circle */
     .checkmark {
       width: 22px;
       height: 22px;
@@ -262,21 +218,10 @@
       transition: background 0.15s, border-color 0.15s;
       flex-shrink: 0;
     }
-    .checkmark.checked {
-      background: var(--check-done);
-      border-color: var(--check-done);
-    }
-    .checkmark svg {
-      opacity: 0;
-      transform: scale(0.5);
-      transition: opacity 0.15s, transform 0.15s;
-    }
-    .checkmark.checked svg {
-      opacity: 1;
-      transform: scale(1);
-    }
+    .checkmark.checked { background: var(--check-done); border-color: var(--check-done); }
+    .checkmark svg { opacity: 0; transform: scale(0.5); transition: opacity 0.15s, transform 0.15s; }
+    .checkmark.checked svg { opacity: 1; transform: scale(1); }
 
-    /* streak cell */
     .streak-cell {
       border-left: 1px solid var(--border);
       display: flex;
@@ -295,33 +240,13 @@
     }
     .streak-val.zero { color: var(--text-faint); }
 
-    /* ── Empty state ── */
     .empty {
       padding: 4rem 2rem;
       text-align: center;
     }
-    .empty-icon {
-      font-size: 2.5rem;
-      display: block;
-      margin-bottom: 1rem;
-      color: var(--text-faint);
-    }
-    .empty h2 {
-      font-size: 1.05rem;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 0.4rem;
-    }
-    .empty p {
-      font-size: 13px;
-      color: var(--text-muted);
-      max-width: 260px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-
-    /* ── Add habit row ── */
-    .add-section { }
+    .empty-icon { font-size: 2.5rem; display: block; margin-bottom: 1rem; color: var(--text-faint); }
+    .empty h2 { font-size: 1.05rem; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
+    .empty p { font-size: 13px; color: var(--text-muted); max-width: 260px; margin: 0 auto; line-height: 1.6; }
 
     .section-label {
       font-family: var(--mono);
@@ -369,115 +294,158 @@
     }
     .add-btn:hover { opacity: 0.85; }
 
-    /* ── Responsive ── */
     @media (max-width: 600px) {
-      .grid-header,
-      .habit-row {
+      .grid-header, .habit-row {
         grid-template-columns: 1fr repeat(7, 32px) 48px;
       }
     }
   </style>
 </head>
 <body>
+<div class="app" id="root"></div>
 
-  <div class="app">
+<script>
+  // ── State ──────────────────────────────────────────────
+  // habits: array of { id, name }
+  // checks: not used yet — added in Step 6
+  let state = {
+    habits: []
+  };
 
-    <!-- Header -->
-    <div class="header">
-      <div>
-        <div class="logo">streaks<span>.</span></div>
-        <div class="week-label">week of 19 May – 25 May</div>
-      </div>
-      <div class="week-nav">
-        <button class="nav-btn">← prev</button>
-        <button class="nav-btn today-btn">today</button>
-        <button class="nav-btn">next →</button>
-      </div>
-    </div>
+  // ── Helpers ────────────────────────────────────────────
+  function makeId() {
+    return 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+  }
 
-    <!-- Grid -->
-    <div class="grid-wrap">
+  // ── Render ─────────────────────────────────────────────
+  function render() {
+    const root = document.getElementById('root');
 
-      <!-- Column headers -->
-      <div class="grid-header">
-        <div class="col-head">habit</div>
-        <div class="col-head">Mon<br/><span style="font-size:10px;opacity:0.7">19</span></div>
-        <div class="col-head">Tue<br/><span style="font-size:10px;opacity:0.7">20</span></div>
-        <div class="col-head">Wed<br/><span style="font-size:10px;opacity:0.7">21</span></div>
-        <div class="col-head">Thu<br/><span style="font-size:10px;opacity:0.7">22</span></div>
-        <div class="col-head is-today">Fri<br/><span style="font-size:10px;opacity:0.8">23</span></div>
-        <div class="col-head">Sat<br/><span style="font-size:10px;opacity:0.7">24</span></div>
-        <div class="col-head">Sun<br/><span style="font-size:10px;opacity:0.7">25</span></div>
-        <div class="col-head streak-head">🔥</div>
-      </div>
+    // --- static week header (real dates come in Step 5) ---
+    const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
-      <!-- Sample habit row (static, just to see the design) -->
-      <div class="habit-row">
-        <div class="habit-name-cell">
-          <div class="habit-name">Read 30 min</div>
+    let html = `
+      <div class="header">
+        <div>
+          <div class="logo">streaks<span>.</span></div>
+          <div class="week-label">week of 19 May – 25 May</div>
         </div>
-        <div class="check-cell">
-          <div class="checkmark checked">
-            <svg width="11" height="8" viewBox="0 0 11 8" fill="none">
-              <path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+        <div class="week-nav">
+          <button class="nav-btn" id="btn-prev">← prev</button>
+          <button class="nav-btn today-btn" id="btn-today">today</button>
+          <button class="nav-btn" id="btn-next">next →</button>
+        </div>
+      </div>
+
+      <div class="grid-wrap">
+        <!-- column headers (static for now) -->
+        <div class="grid-header">
+          <div class="col-head">habit</div>
+          <div class="col-head">Mon<br/><span style="font-size:10px;opacity:.7">19</span></div>
+          <div class="col-head">Tue<br/><span style="font-size:10px;opacity:.7">20</span></div>
+          <div class="col-head">Wed<br/><span style="font-size:10px;opacity:.7">21</span></div>
+          <div class="col-head">Thu<br/><span style="font-size:10px;opacity:.7">22</span></div>
+          <div class="col-head is-today">Fri<br/><span style="font-size:10px;opacity:.8">23</span></div>
+          <div class="col-head">Sat<br/><span style="font-size:10px;opacity:.7">24</span></div>
+          <div class="col-head">Sun<br/><span style="font-size:10px;opacity:.7">25</span></div>
+          <div class="col-head streak-head">🔥</div>
+        </div>
+    `;
+
+    // --- habits or empty state ---
+    if (state.habits.length === 0) {
+      html += `
+        <div class="empty">
+          <span class="empty-icon">◻</span>
+          <h2>No habits yet</h2>
+          <p>Add your first habit below — something small you want to do every day.</p>
+        </div>
+      `;
+    } else {
+      state.habits.forEach(h => {
+        html += `
+          <div class="habit-row" data-id="${h.id}">
+            <div class="habit-name-cell">
+              <div class="habit-name" title="${h.name}">${h.name}</div>
+              <button class="del-btn" data-del="${h.id}" aria-label="Delete ${h.name}">✕</button>
+            </div>
+            <!-- 7 empty check cells (toggles wired in Step 6) -->
+            <div class="check-cell"><div class="checkmark"></div></div>
+            <div class="check-cell"><div class="checkmark"></div></div>
+            <div class="check-cell"><div class="checkmark"></div></div>
+            <div class="check-cell"><div class="checkmark"></div></div>
+            <div class="check-cell is-today"><div class="checkmark"></div></div>
+            <div class="check-cell disabled"><div class="checkmark"></div></div>
+            <div class="check-cell disabled"><div class="checkmark"></div></div>
+            <!-- streak (always 0 for now) -->
+            <div class="streak-cell">
+              <div class="streak-val zero">—</div>
+            </div>
           </div>
-        </div>
-        <div class="check-cell">
-          <div class="checkmark checked">
-            <svg width="11" height="8" viewBox="0 0 11 8" fill="none">
-              <path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
-        <div class="check-cell">
-          <div class="checkmark"></div>
-        </div>
-        <div class="check-cell">
-          <div class="checkmark checked">
-            <svg width="11" height="8" viewBox="0 0 11 8" fill="none">
-              <path d="M1 3.5L4 6.5L10 1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
-        <div class="check-cell is-today">
-          <div class="checkmark"></div>
-        </div>
-        <div class="check-cell disabled">
-          <div class="checkmark"></div>
-        </div>
-        <div class="check-cell disabled">
-          <div class="checkmark"></div>
-        </div>
-        <div class="streak-cell">
-          <div class="streak-val">3<span style="font-size:10px">d</span></div>
-        </div>
-      </div>
+        `;
+      });
+    }
 
-      <!-- Empty state (shown when no habits) -->
-      <div class="empty">
-        <span class="empty-icon">◻</span>
-        <h2>No habits yet</h2>
-        <p>Add your first habit below — something small you want to do every day.</p>
-      </div>
+    html += `</div>`; // close .grid-wrap
 
-    </div>
-
-    <!-- Add habit -->
-    <div class="add-section">
+    // --- add habit form ---
+    html += `
       <div class="section-label">add habit</div>
       <div class="add-wrap">
         <input
           class="add-input"
+          id="habit-input"
           type="text"
           placeholder="e.g. Read 30 min, Exercise, Journal..."
           maxlength="50"
+          aria-label="New habit name"
         />
-        <button class="add-btn">+ add</button>
+        <button class="add-btn" id="add-btn">+ add</button>
       </div>
-    </div>
+    `;
 
-  </div>
+    root.innerHTML = html;
+    bindEvents();
+  }
 
+  // ── Event binding ──────────────────────────────────────
+  function bindEvents() {
+    // Add button
+    document.getElementById('add-btn').addEventListener('click', addHabit);
+
+    // Enter key in input
+    document.getElementById('habit-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addHabit();
+    });
+
+    // Delete buttons
+    document.querySelectorAll('[data-del]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const id = btn.dataset.del;
+        if (confirm('Delete this habit and all its history?')) {
+          state.habits = state.habits.filter(h => h.id !== id);
+          render();
+        }
+      });
+    });
+  }
+
+  // ── Actions ────────────────────────────────────────────
+  function addHabit() {
+    const input = document.getElementById('habit-input');
+    const name = input.value.trim();
+    if (!name) return;
+
+    state.habits.push({ id: makeId(), name });
+    render();
+
+    // re-focus input so user can keep adding
+    document.getElementById('habit-input').focus();
+  }
+
+  // ── Boot ───────────────────────────────────────────────
+  render();
+</script>
 </body>
 </html>
