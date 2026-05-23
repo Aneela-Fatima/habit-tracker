@@ -29,8 +29,8 @@
       --danger:        #C44B2B;
       --today-bg:      #2D6A4F;
       --today-text:    #ffffff;
-      --sans:  'DM Sans', sans-serif;
-      --mono:  'DM Mono', monospace;
+      --sans:  'DM Sans',  sans-serif;
+      --mono:  'DM Mono',  monospace;
       --radius:    10px;
       --radius-sm:  6px;
     }
@@ -68,6 +68,7 @@
       padding: 2rem 1.25rem 4rem;
     }
 
+    /* ── Header ── */
     .header {
       display: flex;
       align-items: flex-end;
@@ -92,6 +93,7 @@
       margin-top: 2px;
     }
 
+    /* ── Week nav ── */
     .week-nav {
       display: flex;
       align-items: center;
@@ -119,6 +121,7 @@
     .nav-btn.today-btn:hover { opacity: 0.85; }
     .nav-btn:disabled { opacity: 0.35; cursor: default; }
 
+    /* ── Grid card ── */
     .grid-wrap {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -134,6 +137,7 @@
       align-items: stretch;
     }
 
+    /* ── Grid header ── */
     .grid-header {
       background: var(--surface2);
       border-bottom: 1px solid var(--border);
@@ -151,10 +155,19 @@
       border-left: 1px solid var(--border);
       line-height: 1.3;
     }
-    .col-head:first-child { border-left: none; text-align: left; padding-left: 16px; }
-    .col-head.is-today { background: var(--today-bg); color: var(--today-text); font-weight: 700; }
+    .col-head:first-child {
+      border-left: none;
+      text-align: left;
+      padding-left: 16px;
+    }
+    .col-head.is-today {
+      background: var(--today-bg);
+      color: var(--today-text);
+      font-weight: 700;
+    }
     .col-head.streak-head { color: var(--streak); }
 
+    /* ── Habit rows ── */
     .habit-row {
       border-top: 1px solid var(--border);
       transition: background 0.12s;
@@ -177,8 +190,32 @@
       overflow: hidden;
       text-overflow: ellipsis;
       padding: 12px 0;
+      cursor: pointer;
+      user-select: none;
     }
 
+    /* rename input */
+    .rename-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid var(--accent);
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      padding: 2px 0;
+      min-width: 0;
+    }
+
+    .rename-hint {
+      font-size: 11px;
+      color: var(--text-faint);
+      white-space: nowrap;
+      font-family: var(--mono);
+    }
+
+    /* delete button */
     .del-btn {
       background: none;
       border: none;
@@ -194,6 +231,7 @@
     .habit-row:hover .del-btn { opacity: 1; }
     .del-btn:hover { color: var(--danger); }
 
+    /* ── Check cells ── */
     .check-cell {
       border-left: 1px solid var(--border);
       display: flex;
@@ -204,8 +242,12 @@
       transition: background 0.12s;
     }
     .check-cell.is-today { background: rgba(45,106,79,0.05); }
-    .check-cell:hover { background: var(--check-done-bg); }
-    .check-cell.disabled { cursor: default; opacity: 0.38; pointer-events: none; }
+    .check-cell:hover:not(.disabled) { background: var(--check-done-bg); }
+    .check-cell.disabled {
+      cursor: default;
+      opacity: 0.38;
+      pointer-events: none;
+    }
 
     .checkmark {
       width: 22px;
@@ -218,10 +260,21 @@
       transition: background 0.15s, border-color 0.15s;
       flex-shrink: 0;
     }
-    .checkmark.checked { background: var(--check-done); border-color: var(--check-done); }
-    .checkmark svg { opacity: 0; transform: scale(0.5); transition: opacity 0.15s, transform 0.15s; }
-    .checkmark.checked svg { opacity: 1; transform: scale(1); }
+    .checkmark.checked {
+      background: var(--check-done);
+      border-color: var(--check-done);
+    }
+    .checkmark svg {
+      opacity: 0;
+      transform: scale(0.5);
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .checkmark.checked svg {
+      opacity: 1;
+      transform: scale(1);
+    }
 
+    /* ── Streak cell ── */
     .streak-cell {
       border-left: 1px solid var(--border);
       display: flex;
@@ -240,14 +293,32 @@
     }
     .streak-val.zero { color: var(--text-faint); }
 
+    /* ── Empty state ── */
     .empty {
       padding: 4rem 2rem;
       text-align: center;
     }
-    .empty-icon { font-size: 2.5rem; display: block; margin-bottom: 1rem; color: var(--text-faint); }
-    .empty h2 { font-size: 1.05rem; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
-    .empty p { font-size: 13px; color: var(--text-muted); max-width: 260px; margin: 0 auto; line-height: 1.6; }
+    .empty-icon {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 1rem;
+      color: var(--text-faint);
+    }
+    .empty h2 {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+    .empty p {
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 260px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
 
+    /* ── Add habit ── */
     .section-label {
       font-family: var(--mono);
       font-size: 11px;
@@ -261,10 +332,12 @@
       display: flex;
       gap: 0.75rem;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .add-input {
       flex: 1;
+      min-width: 200px;
       max-width: 400px;
       background: var(--surface);
       border: 1px solid var(--border);
@@ -294,10 +367,13 @@
     }
     .add-btn:hover { opacity: 0.85; }
 
+    /* ── Responsive ── */
     @media (max-width: 600px) {
-      .grid-header, .habit-row {
+      .grid-header,
+      .habit-row {
         grid-template-columns: 1fr repeat(7, 32px) 48px;
       }
+      .rename-hint { display: none; }
     }
   </style>
 </head>
@@ -305,9 +381,10 @@
 <div class="app" id="root"></div>
 
 <script>
-  // ── Date helpers ───────────────────────────────────────
+  // ── Constants ──────────────────────────────────────────
   const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
+  // ── Date helpers ───────────────────────────────────────
   function getMonday(date) {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
@@ -354,28 +431,23 @@
       const raw = localStorage.getItem('streaks_v1');
       if (raw) return JSON.parse(raw);
     } catch (e) {}
-    // default empty state
-    return { habits: [], checks: {}, weekOffset: 0 };
+    return { habits: [], checks: {} };
   }
 
   function saveState() {
     try {
-      // don't persist weekOffset — always open on current week
-      const toSave = {
+      localStorage.setItem('streaks_v1', JSON.stringify({
         habits: state.habits,
         checks: state.checks
-      };
-      localStorage.setItem('streaks_v1', JSON.stringify(toSave));
+      }));
     } catch (e) {}
   }
 
   // ── State ──────────────────────────────────────────────
-  // checks shape:
-  //   { [habitId]: { [dateKey]: true } }
-  //   e.g. { "h_123": { "2025-05-21": true, "2025-05-22": true } }
   let state = {
     ...loadState(),
-    weekOffset: 0
+    weekOffset: 0,   // 0 = this week, -1 = last week, etc.
+    editingId: null  // habit id currently being renamed
   };
 
   // ── Helpers ────────────────────────────────────────────
@@ -390,7 +462,6 @@
   function toggleCheck(habitId, date) {
     const dk = dateKey(date);
     if (!state.checks[habitId]) state.checks[habitId] = {};
-    // toggle: if true → delete key, if missing → set true
     if (state.checks[habitId][dk]) {
       delete state.checks[habitId][dk];
     } else {
@@ -399,10 +470,24 @@
     saveState();
   }
 
+  function computeStreak(habitId) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    // start from today if checked, else from yesterday
+    const todayChecked = isChecked(habitId, today);
+    let cursor = todayChecked ? today : addDays(today, -1);
+    let streak = 0;
+    while (isChecked(habitId, cursor)) {
+      streak++;
+      cursor = addDays(cursor, -1);
+    }
+    return streak;
+  }
+
   // ── Render ─────────────────────────────────────────────
   function render() {
-    const root   = document.getElementById('root');
-    const today  = new Date();
+    const root  = document.getElementById('root');
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const weekDates    = getWeekDates();
@@ -446,7 +531,7 @@
       `;
     });
     html += `<div class="col-head streak-head">🔥</div>`;
-    html += `</div>`; // end .grid-header
+    html += `</div>`;
 
     // Habits or empty state
     if (state.habits.length === 0) {
@@ -459,18 +544,39 @@
       `;
     } else {
       state.habits.forEach(h => {
+        const isEditing = state.editingId === h.id;
+        const streak    = computeStreak(h.id);
+
         html += `<div class="habit-row" data-id="${h.id}">`;
 
-        // Name cell
-        html += `
-          <div class="habit-name-cell">
-            <div class="habit-name" title="${h.name}">${h.name}</div>
+        // ── Name cell ──
+        html += `<div class="habit-name-cell">`;
+        if (isEditing) {
+          // show rename input
+          html += `
+            <input
+              class="rename-input"
+              id="rename-input"
+              type="text"
+              value="${h.name.replace(/"/g, '&quot;')}"
+              maxlength="50"
+              aria-label="Rename habit"
+            />
+            <span class="rename-hint">enter ✓ · esc ✗</span>
+          `;
+        } else {
+          // show name + pencil + delete
+          html += `
+            <div class="habit-name"
+              data-edit="${h.id}"
+              title="Double-click to rename">${h.name}</div>
             <button class="del-btn" data-del="${h.id}"
               aria-label="Delete ${h.name}">✕</button>
-          </div>
-        `;
+          `;
+        }
+        html += `</div>`;
 
-        // 7 check cells
+        // ── Check cells ──
         weekDates.forEach((d, i) => {
           const isToday  = isSameDay(d, today);
           const isFuture = d > today;
@@ -480,16 +586,13 @@
           if (isToday)  cellClass += ' is-today';
           if (isFuture) cellClass += ' disabled';
 
-          const checkClass = 'checkmark' + (checked ? ' checked' : '');
-
-          // data-habit and data-date drive the toggle handler
           html += `
             <div class="${cellClass}"
               ${!isFuture ? `data-toggle="${h.id}" data-date="${dateKey(d)}"` : ''}
               ${!isFuture ? 'tabindex="0" role="checkbox"' : ''}
               aria-checked="${checked}"
               aria-label="${DAY_NAMES[i]} ${d.getDate()}">
-              <div class="${checkClass}">
+              <div class="checkmark ${checked ? 'checked' : ''}">
                 <svg width="11" height="8" viewBox="0 0 11 8" fill="none">
                   <path d="M1 3.5L4 6.5L10 1"
                     stroke="white" stroke-width="1.8"
@@ -500,10 +603,15 @@
           `;
         });
 
-        // Streak (still placeholder — Step 7)
+        // ── Streak cell ──
         html += `
           <div class="streak-cell">
-            <div class="streak-val zero">—</div>
+            ${streak > 0
+              ? `<div class="streak-val">
+                   ${streak}<span style="font-size:10px;margin-left:1px">d</span>
+                 </div>`
+              : `<div class="streak-val zero">—</div>`
+            }
           </div>
         `;
 
@@ -513,7 +621,7 @@
 
     html += `</div>`; // end .grid-wrap
 
-    // Add habit form
+    // ── Add habit form ──
     html += `
       <div class="section-label">add habit</div>
       <div class="add-wrap">
@@ -530,6 +638,13 @@
     `;
 
     root.innerHTML = html;
+
+    // focus rename input if editing
+    if (state.editingId) {
+      const ri = document.getElementById('rename-input');
+      if (ri) { ri.focus(); ri.select(); }
+    }
+
     bindEvents();
   }
 
@@ -546,26 +661,51 @@
       btn.addEventListener('click', e => {
         e.stopPropagation();
         if (confirm('Delete this habit and all its history?')) {
-          state.habits = state.habits.filter(h => h.id !== btn.dataset.del);
           delete state.checks[btn.dataset.del];
+          state.habits = state.habits.filter(h => h.id !== btn.dataset.del);
           saveState();
           render();
         }
       });
     });
 
+    // Double-click habit name → start rename
+    document.querySelectorAll('[data-edit]').forEach(el => {
+      el.addEventListener('dblclick', () => {
+        state.editingId = el.dataset.edit;
+        render();
+      });
+    });
+
+    // Rename input — commit on Enter, cancel on Escape, commit on blur
+    const renameInput = document.getElementById('rename-input');
+    if (renameInput) {
+      renameInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter')  commitRename(renameInput.value);
+        if (e.key === 'Escape') cancelRename();
+      });
+      renameInput.addEventListener('blur', () => {
+        commitRename(renameInput.value);
+      });
+    }
+
     // Checkmark toggles — click
     document.querySelectorAll('[data-toggle]').forEach(cell => {
       cell.addEventListener('click', () => {
-        toggleCheck(cell.dataset.toggle, new Date(cell.dataset.date + 'T00:00:00'));
+        toggleCheck(
+          cell.dataset.toggle,
+          new Date(cell.dataset.date + 'T00:00:00')
+        );
         render();
       });
-
-      // Keyboard: Enter or Space also toggles (accessibility)
+      // keyboard: Enter or Space
       cell.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          toggleCheck(cell.dataset.toggle, new Date(cell.dataset.date + 'T00:00:00'));
+          toggleCheck(
+            cell.dataset.toggle,
+            new Date(cell.dataset.date + 'T00:00:00')
+          );
           render();
         }
       });
@@ -582,7 +722,10 @@
 
     const todayBtn = document.getElementById('btn-today');
     if (todayBtn) {
-      todayBtn.addEventListener('click', () => { state.weekOffset = 0; render(); });
+      todayBtn.addEventListener('click', () => {
+        state.weekOffset = 0;
+        render();
+      });
     }
   }
 
@@ -595,6 +738,22 @@
     saveState();
     render();
     document.getElementById('habit-input').focus();
+  }
+
+  function commitRename(value) {
+    const name = value.trim();
+    if (name && state.editingId) {
+      const habit = state.habits.find(h => h.id === state.editingId);
+      if (habit) habit.name = name;
+      saveState();
+    }
+    state.editingId = null;
+    render();
+  }
+
+  function cancelRename() {
+    state.editingId = null;
+    render();
   }
 
   // ── Boot ───────────────────────────────────────────────
