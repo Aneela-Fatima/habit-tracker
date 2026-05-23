@@ -11,7 +11,7 @@ No build step required. Open `index.html` in any modern browser:
 python3 -m http.server 8080
 ```
 
-**Deployed URL:** coming soon
+**Deployed URL:** https://habit-tracker-ashen-three.vercel.app/
 
 ---
 
