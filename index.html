@@ -308,34 +308,29 @@
   // ── Date helpers ───────────────────────────────────────
   const DAY_NAMES = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
-  // Get the Monday of any given date's week
   function getMonday(date) {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
-    const day = d.getDay();                  // 0=Sun, 1=Mon … 6=Sat
-    const diff = day === 0 ? -6 : 1 - day;  // how many days back to Monday
+    const day = d.getDay();
+    const diff = day === 0 ? -6 : 1 - day;
     d.setDate(d.getDate() + diff);
     return d;
   }
 
-  // Add N days to a date, return new Date
   function addDays(date, n) {
     const d = new Date(date);
     d.setDate(d.getDate() + n);
     return d;
   }
 
-  // "2025-05-23" — used as a unique key for each day
   function dateKey(date) {
     return date.toISOString().slice(0, 10);
   }
 
-  // Are two dates the same calendar day?
   function isSameDay(a, b) {
     return dateKey(a) === dateKey(b);
   }
 
-  // "19 May – 25 May"
   function formatWeekLabel(monday) {
     const sunday = addDays(monday, 6);
     const opts = { month: 'short', day: 'numeric' };
@@ -346,7 +341,6 @@
     );
   }
 
-  // Returns array of 7 Date objects [Mon … Sun] for the current weekOffset
   function getWeekDates() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -354,10 +348,34 @@
     return Array.from({ length: 7 }, (_, i) => addDays(monday, i));
   }
 
+  // ── Persistence ────────────────────────────────────────
+  function loadState() {
+    try {
+      const raw = localStorage.getItem('streaks_v1');
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    // default empty state
+    return { habits: [], checks: {}, weekOffset: 0 };
+  }
+
+  function saveState() {
+    try {
+      // don't persist weekOffset — always open on current week
+      const toSave = {
+        habits: state.habits,
+        checks: state.checks
+      };
+      localStorage.setItem('streaks_v1', JSON.stringify(toSave));
+    } catch (e) {}
+  }
+
   // ── State ──────────────────────────────────────────────
+  // checks shape:
+  //   { [habitId]: { [dateKey]: true } }
+  //   e.g. { "h_123": { "2025-05-21": true, "2025-05-22": true } }
   let state = {
-    habits: [],
-    weekOffset: 0    // 0 = current week, -1 = last week, +1 = next week
+    ...loadState(),
+    weekOffset: 0
   };
 
   // ── Helpers ────────────────────────────────────────────
@@ -365,15 +383,31 @@
     return 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
   }
 
+  function isChecked(habitId, date) {
+    return !!(state.checks[habitId]?.[dateKey(date)]);
+  }
+
+  function toggleCheck(habitId, date) {
+    const dk = dateKey(date);
+    if (!state.checks[habitId]) state.checks[habitId] = {};
+    // toggle: if true → delete key, if missing → set true
+    if (state.checks[habitId][dk]) {
+      delete state.checks[habitId][dk];
+    } else {
+      state.checks[habitId][dk] = true;
+    }
+    saveState();
+  }
+
   // ── Render ─────────────────────────────────────────────
   function render() {
-    const root    = document.getElementById('root');
-    const today   = new Date();
+    const root   = document.getElementById('root');
+    const today  = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const weekDates   = getWeekDates();
-    const monday      = weekDates[0];
-    const isThisWeek  = state.weekOffset === 0;
+    const weekDates    = getWeekDates();
+    const monday       = weekDates[0];
+    const isThisWeek   = state.weekOffset === 0;
     const isFutureWeek = monday > today;
 
     // ── Header ──
@@ -397,10 +431,9 @@
     // ── Grid ──
     html += `<div class="grid-wrap">`;
 
-    // Column headers — built from real dates
+    // Column headers
     html += `<div class="grid-header">`;
     html += `<div class="col-head">habit</div>`;
-
     weekDates.forEach((d, i) => {
       const isToday = isSameDay(d, today);
       html += `
@@ -412,11 +445,10 @@
         </div>
       `;
     });
-
     html += `<div class="col-head streak-head">🔥</div>`;
     html += `</div>`; // end .grid-header
 
-    // ── Habits or empty state ──
+    // Habits or empty state
     if (state.habits.length === 0) {
       html += `
         <div class="empty">
@@ -438,23 +470,37 @@
           </div>
         `;
 
-        // 7 check cells — one per day
+        // 7 check cells
         weekDates.forEach((d, i) => {
           const isToday  = isSameDay(d, today);
           const isFuture = d > today;
+          const checked  = isChecked(h.id, d);
 
           let cellClass = 'check-cell';
           if (isToday)  cellClass += ' is-today';
           if (isFuture) cellClass += ' disabled';
 
+          const checkClass = 'checkmark' + (checked ? ' checked' : '');
+
+          // data-habit and data-date drive the toggle handler
           html += `
-            <div class="${cellClass}">
-              <div class="checkmark"></div>
+            <div class="${cellClass}"
+              ${!isFuture ? `data-toggle="${h.id}" data-date="${dateKey(d)}"` : ''}
+              ${!isFuture ? 'tabindex="0" role="checkbox"' : ''}
+              aria-checked="${checked}"
+              aria-label="${DAY_NAMES[i]} ${d.getDate()}">
+              <div class="${checkClass}">
+                <svg width="11" height="8" viewBox="0 0 11 8" fill="none">
+                  <path d="M1 3.5L4 6.5L10 1"
+                    stroke="white" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
             </div>
           `;
         });
 
-        // Streak cell (always — for now)
+        // Streak (still placeholder — Step 7)
         html += `
           <div class="streak-cell">
             <div class="streak-val zero">—</div>
@@ -467,7 +513,7 @@
 
     html += `</div>`; // end .grid-wrap
 
-    // ── Add habit form ──
+    // Add habit form
     html += `
       <div class="section-label">add habit</div>
       <div class="add-wrap">
@@ -501,6 +547,25 @@
         e.stopPropagation();
         if (confirm('Delete this habit and all its history?')) {
           state.habits = state.habits.filter(h => h.id !== btn.dataset.del);
+          delete state.checks[btn.dataset.del];
+          saveState();
+          render();
+        }
+      });
+    });
+
+    // Checkmark toggles — click
+    document.querySelectorAll('[data-toggle]').forEach(cell => {
+      cell.addEventListener('click', () => {
+        toggleCheck(cell.dataset.toggle, new Date(cell.dataset.date + 'T00:00:00'));
+        render();
+      });
+
+      // Keyboard: Enter or Space also toggles (accessibility)
+      cell.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleCheck(cell.dataset.toggle, new Date(cell.dataset.date + 'T00:00:00'));
           render();
         }
       });
@@ -527,6 +592,7 @@
     const name  = input.value.trim();
     if (!name) return;
     state.habits.push({ id: makeId(), name });
+    saveState();
     render();
     document.getElementById('habit-input').focus();
   }
